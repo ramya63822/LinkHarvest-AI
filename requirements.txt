@@ -1,8 +1,8 @@
-fastapi
-uvicorn
-google-genai
-reportlab
-playwright
-python-dotenv
-jinja2
-python-multipart
+fastapi==0.110.0
+uvicorn==0.28.0
+google-genai==0.1.1
+reportlab==4.1.0
+playwright==1.42.0
+python-dotenv==1.0.1
+jinja2==3.1.3
+python-multipart==0.0.9
