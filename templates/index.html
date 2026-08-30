@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkHarvest AI Bulk Enterprise Portal</title>
+    <title>LinkHarvest AI Enterprise Portal</title>
     <style>
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f8fafc; color: #1e293b; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .card { background: white; padding: 36px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); width: 100%; max-width: 550px; }
         h2 { color: #0a66c2; margin-top: 0; font-size: 24px; display: flex; align-items: center; gap: 10px; }
         p { color: #64748b; font-size: 13.5px; line-height: 1.5; margin-bottom: 24px; }
         label { font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px; }
-        textarea { width: 100%; height: 140px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; box-sizing: border-box; margin-bottom: 20px; outline: none; resize: none; transition: border-color 0.2s; }
-        textarea:focus { border-color: #0a66c2; }
+        input[type="text"], textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; box-sizing: border-box; margin-bottom: 20px; outline: none; transition: border-color 0.2s; }
+        input[type="text"]:focus, textarea:focus { border-color: #0a66c2; }
+        textarea { height: 130px; resize: none; }
         button { width: 100%; padding: 12px; color: white; background: #0a66c2; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
         button:hover { background: #004182; }
         .status-box { margin-top: 16px; padding: 12px; border-radius: 6px; font-size: 13px; display: none; text-align: center; }
@@ -21,17 +22,21 @@
 </head>
 <body>
     <div class="card">
-        <h2>🚀 LinkHarvest AI Bulk Portal</h2>
-        <p>Input one or multiple profile links below (one link per line). Our persistent backend agent will crawl each profile, consult the LLM, and download your comprehensive PDF candidate dossiers.</p>
+        <h2>🚀 LinkHarvest AI Enterprise Portal</h2>
+        <p>Go to your target profile tab window, press <b>Ctrl + A</b> to highlight all layout text strings, copy it, and paste the values into the dump box below for instant AI dossier extraction.</p>
         
         <form id="extractForm" action="/extract" method="post">
-            <label for="profile_urls">📋 Profile URL Queue List:</label>
-            <textarea id="profile_urls" name="profile_urls" placeholder="https://linkedin.com" required></textarea>
-            <button type="submit" id="submitBtn">🧠 Launch Bulk Sourcing Campaign</button>
+            <label for="profile_url">🌐 Profile Link Address:</label>
+            <input type="text" id="profile_url" name="profile_url" placeholder="https://linkedin.com" required>
+            
+            <label for="raw_dump">📋 Raw Page Text Dump:</label>
+            <textarea id="raw_dump" name="raw_dump" placeholder="Paste full screen highlighted text dump here..." required></textarea>
+            
+            <button type="submit" id="submitBtn">🧠 Generate Premium Dossier PDF</button>
         </form>
         
-        <div id="status" class="status-box loading">⏳ Processing Background Campaign. Your files will download automatically upon completion...</div>
-        <div class="footer">Connected System API Framework • Manifest Free Core V5.5</div>
+        <div id="status" class="status-box loading">⏳ Processing Sourcing Analysis. Your file will download automatically in 5 seconds...</div>
+        <div class="footer">Cloud Infrastructure Instance Active • Core v5.5</div>
     </div>
 
     <script>
@@ -41,6 +46,12 @@
             btn.disabled = true;
             btn.style.background = '#94a3b8';
             status.style.display = 'block';
+            
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.style.background = '#0a66c2';
+                status.style.display = 'none';
+            }, 6000);
         });
     </script>
 </body>
