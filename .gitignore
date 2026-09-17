@@ -3,3 +3,5 @@ venv/
 __pycache__/
 generated/
 *.pdf
+cookies.json
+chrome_profile/

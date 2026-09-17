@@ -3,56 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkHarvest AI Enterprise Portal</title>
+    <title>LinkHarvest AI</title>
     <style>
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f8fafc; color: #1e293b; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .card { background: white; padding: 36px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); width: 100%; max-width: 550px; }
-        h2 { color: #0a66c2; margin-top: 0; font-size: 24px; display: flex; align-items: center; gap: 10px; }
-        p { color: #64748b; font-size: 13.5px; line-height: 1.5; margin-bottom: 24px; }
-        label { font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px; }
-        input[type="text"], textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; box-sizing: border-box; margin-bottom: 20px; outline: none; transition: border-color 0.2s; }
-        input[type="text"]:focus, textarea:focus { border-color: #0a66c2; }
-        textarea { height: 130px; resize: none; }
-        button { width: 100%; padding: 12px; color: white; background: #0a66c2; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-        button:hover { background: #004182; }
-        .status-box { margin-top: 16px; padding: 12px; border-radius: 6px; font-size: 13px; display: none; text-align: center; }
-        .loading { background: #fef9c3; color: #713f12; border: 1px solid #fef08a; }
-        .footer { text-align: center; font-size: 11px; color: #94a3b8; margin-top: 24px; border-top: 1px solid #f1f5f9; padding-top: 12px; }
+        :root {
+            --bg: #f1f5f9; --card: #ffffff; --ink: #0f172a; --muted: #64748b;
+            --line: #e2e8f0; --brand: #0a66c2; --brand-dark: #004182;
+            --ok-bg: #dcfce7; --ok-ink: #14532d; --ok-line: #bbf7d0;
+            --err-bg: #fee2e2; --err-ink: #7f1d1d; --err-line: #fecaca;
+            --warn-bg: #fef9c3; --warn-ink: #713f12; --warn-line: #fef08a;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg); color: var(--ink); margin: 0;
+            padding: 32px 16px; display: flex; justify-content: center;
+        }
+        .card {
+            background: var(--card); padding: 32px; border-radius: 14px;
+            box-shadow: 0 10px 25px -8px rgb(15 23 42 / 0.15);
+            width: 100%; max-width: 720px;
+        }
+        h1 { font-size: 22px; margin: 0 0 6px; color: var(--brand); }
+        .sub { color: var(--muted); font-size: 13.5px; line-height: 1.55; margin: 0 0 22px; }
+        label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px; }
+        textarea {
+            width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;
+            font-size: 13.5px; font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+            height: 150px; resize: vertical; outline: none; line-height: 1.6;
+        }
+        textarea:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgb(10 102 194 / 0.12); }
+        .row { display: flex; justify-content: space-between; align-items: center;
+               font-size: 11.5px; color: var(--muted); margin: 6px 2px 18px; }
+        button {
+            width: 100%; padding: 13px; color: #fff; background: var(--brand);
+            border: none; border-radius: 8px; font-size: 15px; font-weight: 600;
+            cursor: pointer; transition: background .15s;
+        }
+        button:hover:not(:disabled) { background: var(--brand-dark); }
+        button:disabled { background: #94a3b8; cursor: not-allowed; }
+        .note {
+            margin-top: 18px; padding: 12px 14px; border-radius: 8px; font-size: 12.5px;
+            line-height: 1.55; background: var(--warn-bg); color: var(--warn-ink);
+            border: 1px solid var(--warn-line);
+        }
+        .banner {
+            margin-top: 20px; padding: 12px 14px; border-radius: 8px;
+            font-size: 13px; line-height: 1.5; display: none;
+        }
+        .banner.show { display: block; }
+        .banner.loading { background: var(--warn-bg); color: var(--warn-ink); border: 1px solid var(--warn-line); }
+        .banner.ok { background: var(--ok-bg); color: var(--ok-ink); border: 1px solid var(--ok-line); }
+        .banner.err { background: var(--err-bg); color: var(--err-ink); border: 1px solid var(--err-line); }
+        .results { margin-top: 18px; display: none; }
+        .results.show { display: block; }
+        .item {
+            border: 1px solid var(--line); border-left-width: 4px; border-radius: 8px;
+            padding: 12px 14px; margin-bottom: 10px; font-size: 13px; line-height: 1.5;
+        }
+        .item.ok { border-left-color: #16a34a; }
+        .item.err { border-left-color: #dc2626; }
+        .item.warn { border-left-color: #d97706; }
+        .item .who { font-weight: 600; font-size: 14px; }
+        .item .meta { color: var(--muted); font-size: 12px; margin-top: 3px; word-break: break-all; }
+        .item .why { color: #92400e; font-size: 12.5px; margin-top: 5px; }
+        .badge {
+            display: inline-block; font-size: 10.5px; font-weight: 700;
+            padding: 2px 7px; border-radius: 999px; text-transform: uppercase;
+            letter-spacing: 0.5px; vertical-align: middle; margin-left: 6px;
+        }
+        .badge-green { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .badge-blue { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .dl {
+            display: block; text-align: center; margin-top: 16px; padding: 13px;
+            background: #16a34a; color: #fff; border-radius: 8px; font-weight: 600;
+            text-decoration: none; font-size: 15px;
+        }
+        .dl:hover { background: #15803d; }
+        .footer { text-align: center; font-size: 11px; color: #94a3b8;
+                  margin-top: 26px; border-top: 1px solid #f1f5f9; padding-top: 14px; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>🚀 LinkHarvest AI Enterprise Portal</h2>
-        <p>Go to your target profile tab window, press <b>Ctrl + A</b> to highlight all layout text strings, copy it, and paste the values into the dump box below for instant AI dossier extraction.</p>
-        
-        <form id="extractForm" action="/extract" method="post">
-            <label for="profile_url">🌐 Profile Link Address:</label>
-            <input type="text" id="profile_url" name="profile_url" placeholder="https://linkedin.com" required>
-            
-            <label for="raw_dump">📋 Raw Page Text Dump:</label>
-            <textarea id="raw_dump" name="raw_dump" placeholder="Paste full screen highlighted text dump here..." required></textarea>
-            
-            <button type="submit" id="submitBtn">🧠 Generate Premium Dossier PDF</button>
-        </form>
-        
-        <div id="status" class="status-box loading">⏳ Processing Sourcing Analysis. Your file will download automatically in 5 seconds...</div>
-        <div class="footer">Cloud Infrastructure Instance Active • Core v5.5</div>
+<div class="card">
+    <h1>LinkHarvest AI</h1>
+    <p class="sub">
+        Paste one profile URL per line. Each page is fetched, read by Gemini, and turned
+        into an organised PDF dossier. One URL gives you a PDF; several give you a zip.
+    </p>
+
+    <form id="form">
+        <label for="urls">Profile URLs — one per line</label>
+        <textarea id="urls" name="urls" required
+                  placeholder="https://example.com/about&#10;https://github.com/torvalds&#10;https://en.wikipedia.org/wiki/Ada_Lovelace"></textarea>
+        <div class="row">
+            <span id="count">0 URLs</span>
+            <span>Limit {{ max_urls }} per batch</span>
+        </div>
+        <button type="submit" id="go">Generate dossiers</button>
+    </form>
+
+    <div class="note">
+        <b>LinkedIn profiles go through Apify</b> ({{ apify_state }}), which scrapes them
+        on its own infrastructure and returns structured data — no LinkedIn login or
+        cookies of yours are involved. Every other URL is fetched directly and read by
+        Gemini: personal sites, GitHub, university or company staff pages, Wikipedia.
     </div>
 
-    <script>
-        document.getElementById('extractForm').addEventListener('submit', function() {
-            const btn = document.getElementById('submitBtn');
-            const status = document.getElementById('status');
-            btn.disabled = true;
-            btn.style.background = '#94a3b8';
-            status.style.display = 'block';
-            
-            setTimeout(() => {
-                btn.disabled = false;
-                btn.style.background = '#0a66c2';
-                status.style.display = 'none';
-            }, 6000);
-        });
-    </script>
+    <div id="banner" class="banner"></div>
+    <div id="results" class="results"></div>
+
+    <div class="footer">LinkHarvest AI • v6</div>
+</div>
+
+<script>
+    const form = document.getElementById('form');
+    const urls = document.getElementById('urls');
+    const go = document.getElementById('go');
+    const banner = document.getElementById('banner');
+    const results = document.getElementById('results');
+    const count = document.getElementById('count');
+
+    const lines = () => urls.value.split('\n').map(s => s.trim()).filter(Boolean);
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g,
+        c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    urls.addEventListener('input', () => {
+        const n = lines().length;
+        count.textContent = n + (n === 1 ? ' URL' : ' URLs');
+    });
+
+    function show(kind, html) {
+        banner.className = 'banner show ' + kind;
+        banner.innerHTML = html;
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const n = lines().length;
+        if (!n) { show('err', 'Enter at least one URL.'); return; }
+
+        go.disabled = true;
+        results.className = 'results';
+        results.innerHTML = '';
+        show('loading', 'Fetching and analysing ' + n + (n === 1 ? ' page' : ' pages') + '…');
+
+        try {
+            const res = await fetch('/extract', {
+                method: 'POST',
+                body: new FormData(form)
+            });
+            const body = await res.json().catch(() => null);
+
+            if (!res.ok) {
+                show('err', '<b>Request failed (HTTP ' + res.status + ')</b><br>' +
+                     esc(body && body.detail ? body.detail : 'No details returned.'));
+                return;
+            }
+
+            results.className = 'results show';
+            results.innerHTML = body.results.map(r => {
+                if (!r.ok) {
+                    return '<div class="item err"><div class="who">Could not process</div>' +
+                           '<div class="meta">' + esc(r.url) + '</div>' +
+                           '<div class="why">' + esc(r.error) + '</div></div>';
+                }
+
+                const counts = [];
+                counts.push(r.roles + (r.roles === 1 ? ' role' : ' roles'));
+                counts.push(r.education + ' education');
+                counts.push(r.skills + ' skills');
+                if (r.certifications) counts.push(r.certifications + (r.certifications === 1 ? ' cert' : ' certs'));
+                if (r.languages) counts.push(r.languages + (r.languages === 1 ? ' lang' : ' langs'));
+                if (r.volunteering) counts.push(r.volunteering + ' vol');
+                if (r.honors) counts.push(r.honors + (r.honors === 1 ? ' award' : ' awards'));
+                if (r.publications) counts.push(r.publications + (r.publications === 1 ? ' pub' : ' pubs'));
+
+                let badges = '';
+                if (r.open_to_work) badges += '<span class="badge badge-green">Open to Work</span>';
+                if (r.verified) badges += '<span class="badge badge-blue">Verified</span>';
+
+                let extraMeta = '';
+                const details = [];
+                if (r.company) details.push(esc(r.company));
+                if (r.location) details.push(esc(r.location));
+                if (r.connections) details.push(esc(r.connections) + ' conn');
+                if (r.followers) details.push(esc(r.followers) + ' followers');
+                if (details.length) {
+                    extraMeta += '<div class="meta">' + details.join(' · ') + '</div>';
+                }
+                if (r.email) {
+                    extraMeta += '<div class="meta" style="color: var(--brand); font-weight: 500;">✉ ' + esc(r.email) + '</div>';
+                }
+
+                return '<div class="item ' + (r.warning ? 'warn' : 'ok') + '">' +
+                       '<div class="who">' + esc(r.name) + badges + '</div>' +
+                       (r.headline ? '<div class="meta">' + esc(r.headline) + '</div>' : '') +
+                       extraMeta +
+                       '<div class="meta" style="color: #334155; font-weight: 500;">' + counts.join(' · ') + ' · ' + esc(r.filename) + '</div>' +
+                       '<div class="meta">' + esc(r.url) + '</div>' +
+                       (r.warning ? '<div class="why">' + esc(r.warning) + '</div>' : '') + '</div>';
+            }).join('');
+
+            if (body.download_url) {
+                results.innerHTML += '<a class="dl" href="' + body.download_url +
+                    '">Download ' + (body.succeeded > 1
+                        ? 'all ' + body.succeeded + ' dossiers (.zip)' : 'dossier (.pdf)') + '</a>';
+            }
+
+            const kind = body.failed === 0 ? 'ok' : (body.succeeded === 0 ? 'err' : 'loading');
+            show(kind, '<b>' + body.succeeded + ' of ' + body.total +
+                 ' succeeded.</b>' + (body.failed ? ' ' + body.failed + ' failed — see below.' : ''));
+        } catch (err) {
+            show('err', '<b>Could not reach the server.</b><br>' + esc(err.message));
+        } finally {
+            go.disabled = false;
+        }
+    });
+</script>
 </body>
 </html>
